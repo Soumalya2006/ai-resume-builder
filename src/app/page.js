@@ -52,21 +52,31 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-[#080B11] text-slate-200 font-sans p-4 md:p-8">
+    <main className="min-h-screen bg-[#080B11] text-slate-200 font-sans p-4 md:p-8 relative">
+      <div className="max-w-7xl mx-auto text-center mb-12">
+        <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-2 text-white">Pro AI Resume Studio</h1>
+      </div>
+
       <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-10">
-        
-        {/* BUILDER SECTION */}
-        <div className="bg-[#0F1524] border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6">
-          <h2 className="text-xl font-bold text-white">⚙️ Resume Builder</h2>
+        <div className="bg-[#0F1524] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
+          <h2 className="text-xl font-bold text-white">⚙️ Builder</h2>
+          
+          {/* Inputs */}
           <input type="text" className="w-full bg-[#080B11] border border-slate-700 rounded-xl p-3 text-white" placeholder="Full Name" onChange={(e) => setFormData({...formData, name: e.target.value})} />
           <input type="text" className="w-full bg-[#080B11] border border-slate-700 rounded-xl p-3 text-white" placeholder="Profession" onChange={(e) => setFormData({...formData, profession: e.target.value})} />
-          <textarea rows="3" className="w-full bg-[#080B11] border border-slate-700 rounded-xl p-3 text-white" placeholder="Experience" onChange={(e) => setFormData({...formData, experience: e.target.value})}></textarea>
+          <input type="text" className="w-full bg-[#080B11] border border-slate-700 rounded-xl p-3 text-white" placeholder="Skills" onChange={(e) => setFormData({...formData, skills: e.target.value})} />
           
-          {/* Custom Sections Inputs */}
+          <button onClick={generateAISummary} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 py-3 rounded-xl font-bold">
+            {loading ? 'AI Writing...' : '✨ Generate AI Summary'}
+          </button>
+          
+          <textarea rows="3" className="w-full bg-[#080B11] border border-slate-700 rounded-xl p-3 text-white" placeholder="Experience" onChange={(e) => setFormData({...formData, experience: e.target.value})}></textarea>
+
+          {/* Custom Sections Editor */}
           {customSections.map(sec => (
-            <div key={sec.id} className="p-3 border border-slate-700 rounded-xl space-y-2">
+            <div key={sec.id} className="bg-[#161F32] p-4 rounded-xl border border-slate-700 space-y-2">
               <input type="text" className="w-full bg-[#080B11] border border-slate-700 rounded-lg p-2 text-white" placeholder="Section Title" onChange={(e) => updateCustomSection(sec.id, 'title', e.target.value)} />
-              <textarea className="w-full bg-[#080B11] border border-slate-700 rounded-lg p-2 text-white" placeholder="Section Content" onChange={(e) => updateCustomSection(sec.id, 'content', e.target.value)}></textarea>
+              <textarea className="w-full bg-[#080B11] border border-slate-700 rounded-lg p-2 text-white" placeholder="Content" onChange={(e) => updateCustomSection(sec.id, 'content', e.target.value)}></textarea>
               <button onClick={() => removeCustomSection(sec.id)} className="text-red-400 text-xs">Remove</button>
             </div>
           ))}
@@ -76,19 +86,25 @@ export default function Home() {
           </button>
         </div>
 
-        {/* PREVIEW SECTION */}
-        <div className="bg-white p-12 w-full max-w-[800px] mx-auto text-black" ref={resumeRef}>
-          <h1 className="text-3xl font-bold uppercase">{formData.name || 'YOUR NAME'}</h1>
-          <p className="text-blue-600 font-bold">{formData.profession || 'PROFESSION'}</p>
-          <div className="mt-6"><h3 className="font-bold border-b border-black">Experience</h3><p>{formData.experience}</p></div>
-          
-          {/* Rendering Custom Sections */}
-          {customSections.map(sec => (
-             <div key={sec.id} className="mt-6">
-               <h3 className="font-bold border-b border-black">{sec.title}</h3>
-               <p>{sec.content}</p>
-             </div>
-          ))}
+        {/* PREVIEW */}
+        <div className="flex flex-col">
+          <button onClick={downloadPDF} className="mb-4 bg-emerald-500 text-black font-bold py-3 rounded-xl">📥 Download PDF</button>
+          <div className="bg-white p-12 min-h-[900px] text-black shadow-2xl" ref={resumeRef}>
+            <h1 className="text-3xl font-bold uppercase">{formData.name || 'YOUR NAME'}</h1>
+            <p className="text-blue-600 font-bold mb-4">{formData.profession || 'PROFESSION'}</p>
+            {formData.summary && <p className="mb-6">{formData.summary}</p>}
+            
+            <h3 className="font-bold border-b border-black mb-2">Experience</h3>
+            <p className="whitespace-pre-line mb-6">{formData.experience}</p>
+
+            {/* Custom Sections in Preview */}
+            {customSections.map(sec => (
+               <div key={sec.id} className="mt-4">
+                 <h3 className="font-bold border-b border-black uppercase">{sec.title}</h3>
+                 <p className="whitespace-pre-line">{sec.content}</p>
+               </div>
+            ))}
+          </div>
         </div>
       </div>
     </main>
